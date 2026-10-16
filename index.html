@@ -1,319 +1,83 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>百數圖｜倍數與質數探索</title>
 <style>
-*{box-sizing:border-box}
-body{font-family:"Microsoft JhengHei",sans-serif;background:#f3f7fb;color:#24364b;margin:0}
-main{max-width:1000px;margin:auto;padding:16px}
-h1{font-size:1.7rem}h2{font-size:1.2rem}
-.panel{background:white;padding:18px;border-radius:15px;margin:14px 0;box-shadow:0 2px 10px #0001}
-.controls{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
-button,select{font:inherit;padding:10px;border:1px solid #b9c8d9;border-radius:9px;background:white;color:#24364b;cursor:pointer}
-button.active,button.primary{background:#1769aa;color:white;border-color:#1769aa}
-button:disabled{cursor:default}
-.controls button:disabled{opacity:.45}
-.grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;max-width:720px;margin:auto}
-.cell{aspect-ratio:1;padding:0;font-size:clamp(12px,2vw,21px);font-weight:bold;border-radius:7px;background:#f7faff}
-.correct,.prime{background:#39b77c;color:#092d1c}
-.missed{background:#ffca70}
-.wrong{background:#ff9292}
-.a{background:#8cc4ff}.b{background:#ffce67}.both{background:#ba9aee}
-.composite{background:#89929e;color:#fff}
-.one{background:#ffe09a}
-.preview2{background:#f5a623;color:#27200a}
-.preview3{background:#42a5f5;color:#082d4c}
-.preview5{background:#b477df;color:#251034}
-.preview7{background:#f06a76;color:#430a14}
-.hidden{display:none}
-#message{background:#edf5ff;border-radius:9px;padding:12px;margin:12px 0;min-height:45px}
-.note{color:#526477;line-height:1.6}
-.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.9rem}
-.dot{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:middle;margin-right:4px}
-@media(max-width:520px){main{padding:9px}.panel{padding:11px}.grid{gap:3px}.cell{border-radius:4px}}
+:root{font-family:"Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;color:#213348;background:#eef4fa}*{box-sizing:border-box}body{margin:0}main{max-width:1080px;margin:auto;padding:16px}h1{font-size:clamp(1.5rem,3vw,2.2rem)}h2{margin:0 0 12px;font-size:1.3rem}.panel{background:white;padding:20px;border-radius:15px;margin:14px 0;box-shadow:0 3px 14px #172b4412}.controls{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}button,select{font:inherit;padding:10px 13px;border:1px solid #a9bbcd;border-radius:9px;background:#fff;color:#22364a;cursor:pointer}button:hover:not(:disabled){filter:brightness(.95)}button:disabled{opacity:.5;cursor:default}.primary,.tab.active{background:#1264a3;color:white;border-color:#1264a3}.hidden{display:none!important}.note{color:#4a6179;line-height:1.7}.big-note{font-size:clamp(1.2rem,2.7vw,1.75rem);font-weight:700;background:#0866bd;color:#fff;padding:15px 18px;border-radius:9px;line-height:1.45}.grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:3px;max-width:760px;margin:16px auto}.cell{position:relative;aspect-ratio:1;padding:0;border:1.5px solid #8291a1;border-radius:3px;background:#fff;font-size:clamp(12px,2.2vw,23px);font-weight:700;color:#15283a;display:flex;align-items:center;justify-content:center}.cell .num{z-index:1;position:relative;display:flex;align-items:center;justify-content:center;width:77%;height:77%}.cell.prime .num{border:clamp(2px,.45vw,4px) solid #ed3346;border-radius:50%;background:#fff}.cell.composite{background:#c0c8d0;color:#384b5f}.cell.composite::after{content:"×";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(21px,4.4vw,43px);font-weight:800;color:#6d7b89;opacity:.82;z-index:2}.cell.preview{background:#d7ff45;color:#15283a}.cell.preview.already{background:#d7ff45}.cell.newly-removed{background:#c0c8d0}.cell.newly-removed::after{content:"×";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(21px,4.4vw,43px);font-weight:800;color:#0099e5;z-index:2;pointer-events:none}.cell.one{background:#dce1e7}.cell.one::after{content:"×";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(21px,4.4vw,43px);color:#788797;z-index:2}.cell.correct{background:#a7ebc0}.cell.missed{background:#ffcc73}.cell.groupA{background:#92c6ff}.cell.groupB{background:#ffe08b}.cell.both{background:#c4a2f0}#message{padding:13px 16px;background:#e9f3ff;border-radius:9px;font-size:1.1rem;line-height:1.6}#summary{line-height:1.7}.legend{display:flex;flex-wrap:wrap;gap:14px;margin:14px 0;font-size:.96rem}.key{display:inline-block;width:17px;height:17px;border:1px solid #9da9b5;vertical-align:middle;margin-right:5px}.key.current{background:#d7ff45}.key.old{background:#a5cbd1}.key.removed{background:#c0c8d0}.key.saved{background:white;border:3px solid #ed3346;border-radius:50%}.question{background:#fff8e9;border-left:5px solid #e9a62a;padding:12px 15px;margin-top:12px;line-height:1.7}#gridTitle{font-size:1.2rem;font-weight:700;text-align:center}#primeActions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}@media(max-width:550px){main{padding:8px}.panel{padding:12px}.grid{gap:2px}.cell{border-width:1px}.controls{gap:6px}button,select{padding:9px}}
 </style>
 </head>
-<body>
-<main>
-<h1>百數圖｜倍數與質數探索</h1>
-<p class="note">自己找倍數、觀察公倍數、探索質數。不計時，也不需要解鎖關卡。</p>
-<div class="controls">
-<button class="active" data-mode="practice">① 倍數基礎練習</button>
-<button data-mode="relation">② 倍數關係探索</button>
-<button data-mode="prime">③ 質數探索</button>
-</div>
-
-<section class="panel" id="practice">
-<h2>倍數基礎練習</h2>
-<div class="controls">
-<select id="level">
-<option value="basic">基礎：2～10</option>
-<option value="middle">進階：11～15</option>
-<option value="high">挑戰：16～20</option>
-<option value="all">綜合：2～20</option>
-</select>
-<select id="number"></select>
-<button id="random">隨機選擇</button>
-</div>
-<p class="note">逐一點選正確的倍數，答錯可以再試。全部找好後按「完成檢查」。</p>
-<div class="controls">
-<button class="primary" id="finish">完成檢查</button>
-<button id="hint">給我提示</button>
-<button id="restart">重新練習</button>
-</div>
-<p id="hintText" class="note"></p>
-</section>
-
-<section class="panel hidden" id="relation">
-<h2>倍數關係探索</h2>
-<p class="note">先找第一組，再找第二組。兩組共同的倍數會呈現紫色。</p>
-<div class="controls">
-<select id="first"></select>
-<select id="second"></select>
-</div>
-<div class="controls">
-<button class="primary" id="next">完成第一組，開始第二組</button>
-<button id="checkRelation">完成檢查</button>
-<button id="common">只看公倍數</button>
-<button id="resetRelation">重新探索</button>
-</div>
-<p class="note">藍色：第一組　黃色：第二組　紫色：兩組重疊</p>
-</section>
-
-<section class="panel hidden" id="prime">
-<h2>質數探索：埃拉托斯特尼篩法</h2>
-<p class="note">1不是質數，也不是合數。依序保留2、3、5、7，篩除它們的其他倍數。</p>
-<div class="controls">
-<button data-sieve="2">標示2的其他倍數</button>
-<button data-sieve="3">標示3的其他倍數</button>
-<button data-sieve="5">標示5的其他倍數</button>
-<button data-sieve="7">標示7的其他倍數</button>
-</div>
-<div class="controls">
-<button class="primary" id="confirmSieve" disabled>確定篩除</button>
-<button id="showPrimes">顯示所有質數</button>
-<button id="resetPrime">重新開始</button>
-</div>
-<div class="legend">
-<span><i class="dot" style="background:#f5a623"></i>2：橘色</span>
-<span><i class="dot" style="background:#42a5f5"></i>3：藍色</span>
-<span><i class="dot" style="background:#b477df"></i>5：紫色</span>
-<span><i class="dot" style="background:#f06a76"></i>7：紅色</span>
-<span><i class="dot" style="background:#89929e"></i>已篩除</span>
-<span><i class="dot" style="background:#39b77c"></i>質數</span>
-</div>
-</section>
-
-<section class="panel">
-<div id="message" role="status" aria-live="polite"></div>
-<div id="grid" class="grid"></div>
-<p id="summary" class="note"></p>
-</section>
-</main>
-
-<script>
+<body><main>
+<h1>百數圖｜倍數與質數探索</h1><p class="note">透過百數圖，練習倍數、探索公倍數與質數。不計時，可以反覆練習。</p>
+<div class="controls" id="tabs"><button class="tab active" data-mode="practice">① 倍數基礎練習</button><button class="tab" data-mode="relation">② 倍數關係探索</button><button class="tab" data-mode="prime">③ 質數探索</button></div>
+<section class="panel" id="practice"><h2>倍數基礎練習</h2><div class="controls"><select id="level"><option value="basic">基礎：2～10</option><option value="middle">進階：11～15</option><option value="high">挑戰：16～20</option><option value="all">綜合：2～20</option></select><select id="number"></select><button id="random">隨機選擇</button></div><p class="note">逐一點選正確的倍數，答錯可以再試。全部找好後按「完成檢查」。</p><div class="controls"><button class="primary" id="finish">完成檢查</button><button id="hint">給我提示</button><button id="restart">重新練習</button></div><p id="hintText" class="note"></p></section>
+<section class="panel hidden" id="relation"><h2>倍數關係探索</h2><p class="note">先找第一組，再找第二組。兩組共同的倍數會呈現紫色。</p><div class="controls"><select id="first"></select><select id="second"></select></div><div class="controls"><button class="primary" id="next">完成第一組，開始第二組</button><button id="checkRelation">完成檢查</button><button id="common">只看公倍數</button><button id="resetRelation">重新探索</button></div><p class="note">藍色：第一組　黃色：第二組　紫色：共同倍數</p></section>
+<section class="panel hidden" id="prime"><h2>質數探索：百數表篩選法</h2><div class="big-note" id="primeInstruction">步驟一：1不是質數，也不是合數。</div><p class="note">先用亮綠色觀察某數及它的全部倍數（不顯示新的叉號）。按「確定篩除」後，保留的質數變成白底紅圈，本次新刪除的合數才出現藍色叉號；先前刪除的合數用灰色叉號。</p><div class="legend"><span><i class="key saved"></i>保留質數</span><span><i class="key current"></i>亮綠底：本次觀察的全部倍數（含保留的質數）</span><span style="color:#008fda;font-weight:bold">✕</span> 藍色叉號：本次新刪除<span style="color:#7d8791;font-weight:bold">✕</span> 灰色叉號：之前已刪除<span><i class="key removed"></i>確認後的合數</span></div><div id="primeActions"><button class="primary" id="primeNext">排除1</button><button id="primeConfirm" class="primary hidden">確定篩除</button><button id="primeRestart">重新開始</button></div><div id="primeEnd" class="hidden"><p class="question">正式練習完成！為什麼篩選到7就能找出100以內所有的質數？</p><button id="primeExtension">延伸探索：檢查11和13</button><button id="primeList">列出所有質數</button></div><div id="extensionInfo" class="question hidden"></div></section>
+<section class="panel"><div id="message" role="status" aria-live="polite"></div><div id="gridTitle">百數表（1～100）</div><div class="grid" id="grid"></div><p class="note" id="summary"></p></section>
+</main><script>
 const $=id=>document.getElementById(id);
 const nums=(a,b)=>Array.from({length:Math.max(0,b-a+1)},(_,i)=>a+i);
-const isPrime=n=>n>=2&&!nums(2,Math.floor(Math.sqrt(n))).some(k=>n%k===0);
-
-let mode="practice",selected=new Set(),done=false;
+const prime=n=>n>=2&&!nums(2,Math.floor(Math.sqrt(n))).some(k=>n%k===0);
+const primeList=nums(1,100).filter(prime);
+let mode='practice',selected=new Set(),done=false;
 let stage=0,groups=[new Set(),new Set()],checked=false,onlyCommon=false;
-let sieves=new Set(),pending=null,showAll=false;
-
-function msg(t){$("message").textContent=t}
-function fill(id,values){
-$(id).innerHTML=values.map(n=>'<option value="'+n+'">'+n+'的倍數</option>').join("");
-}
-function choices(){
-let x=$("level").value;
-return x==="basic"?nums(2,10):x==="middle"?nums(11,15):x==="high"?nums(16,20):nums(2,20);
-}
-function startPractice(){
-selected=new Set();done=false;
-$("hintText").textContent="";
-msg("請找出 "+$("number").value+" 的所有倍數。");
-draw();
-}
-function startRelation(){
-stage=0;groups=[new Set(),new Set()];
-checked=false;onlyCommon=false;
-$("next").disabled=false;
-$("common").textContent="只看公倍數";
-msg("第一步：找出 "+$("first").value+" 的倍數。");
-draw();
-}
-function startPrime(){
-sieves=new Set();pending=null;showAll=false;
-msg("請先標示2的其他倍數，觀察後再按「確定篩除」。");
-draw();
+// 質數篩選：step 0=排除1前，1..4=2,3,5,7；5=完成。延伸階段6,7檢查11,13。
+let sieveStep=0,pending=false,extension=false,extensionStep=0,showPrimeList=false,lastConfirmed=null;
+const bases=[2,3,5,7];
+function msg(t){$('message').textContent=t}
+function fill(id,values){$(id).innerHTML=values.map(n=>'<option value="'+n+'">'+n+'的倍數</option>').join('')}
+function choices(){let x=$('level').value;return x==='basic'?nums(2,10):x==='middle'?nums(11,15):x==='high'?nums(16,20):nums(2,20)}
+function startPractice(){selected=new Set();done=false;$('hintText').textContent='';msg('請找出 '+$('number').value+' 的所有倍數。');draw()}
+function startRelation(){stage=0;groups=[new Set(),new Set()];checked=false;onlyCommon=false;$('next').disabled=false;$('common').textContent='只看公倍數';msg('第一步：找出 '+$('first').value+' 的倍數。');draw()}
+function startPrime(){sieveStep=0;pending=false;extension=false;extensionStep=0;showPrimeList=false;lastConfirmed=null;msg('先排除1，再從2開始篩選。');draw()}
+function removed(n){if(n===1)return sieveStep>=1;return bases.slice(0,Math.max(0,sieveStep-1)).some(p=>n!==p&&n%p===0)}
+function currentBase(){return extension?[11,13][extensionStep]:bases[sieveStep-1]}
+function primeDrawStatus(){
+const complete=sieveStep>=5;
+$('primeEnd').classList.toggle('hidden',!complete||extension);
+$('primeConfirm').classList.toggle('hidden',!pending);
+$('primeNext').classList.toggle('hidden',pending||complete);
+$('extensionInfo').classList.toggle('hidden',!extension);
+if(sieveStep===0){$('primeInstruction').textContent='步驟一：1不是質數，也不是合數。';$('primeNext').textContent='排除1'}
+else if(!complete){let p=bases[sieveStep-1];$('primeInstruction').textContent='步驟'+['二','三','四','五'][sieveStep-1]+'：保留'+p+'，刪除'+p+'的其他倍數。';$('primeNext').textContent='標示'+p+'的其他倍數'}
+else if(extension){let p=[11,13][extensionStep];$('primeInstruction').textContent='延伸探索：保留'+p+'，檢查'+p+'的其他倍數。';$('extensionInfo').textContent='請觀察亮綠底的倍數：灰色叉號表示之前已刪除；11和13的其他倍數都不會產生新的藍色叉號。';}
+else{$('primeInstruction').textContent='完成！篩選到7，就已找出100以內全部25個質數。'}
+if(extension){$('primeConfirm').classList.toggle('hidden',!pending);$('primeNext').classList.toggle('hidden',pending||extensionStep>=2);$('primeNext').textContent='標示'+[11,13][extensionStep]+'的其他倍數';}
 }
 function draw(){
-let grid=$("grid");grid.innerHTML="";
-let target=+$("number").value;
-let a=+$("first").value,b=+$("second").value;
+if(mode==='prime')primeDrawStatus();
+const grid=$('grid');grid.innerHTML='';const target=+$('number').value,a=+$('first').value,b=+$('second').value;
 for(let n=1;n<=100;n++){
-let el=document.createElement("button");
-el.className="cell";el.textContent=n;
-if(mode==="practice"){
-if(selected.has(n))el.classList.add("correct");
-else if(done&&n%target===0)el.classList.add("missed");
-}
-if(mode==="relation"){
-let A=checked?n%a===0:groups[0].has(n);
-let B=checked?n%b===0:groups[1].has(n);
-if(A&&B)el.classList.add("both");
-else if(A)el.classList.add("a");
-else if(B)el.classList.add("b");
-if(onlyCommon&&!(A&&B))el.style.opacity=".2";
-}
-if(mode==="prime"){
-if(n===1){
-el.classList.add("one");
-}else if([...sieves].some(p=>n!==p&&n%p===0)){
-el.classList.add("composite");
-}else if(pending!==null&&n!==pending&&n%pending===0){
-el.classList.add("preview"+pending);
-}else if(isPrime(n)&&(showAll||sieves.has(n))){
-el.classList.add("prime");
+const el=document.createElement('button');el.className='cell';el.type='button';const span=document.createElement('span');span.className='num';span.textContent=n;el.appendChild(span);
+if(mode==='practice'){if(selected.has(n))el.classList.add('correct');else if(done&&n%target===0)el.classList.add('missed')}
+if(mode==='relation'){const A=checked?n%a===0:groups[0].has(n),B=checked?n%b===0:groups[1].has(n);if(A&&B)el.classList.add('both');else if(A)el.classList.add('groupA');else if(B)el.classList.add('groupB');if(onlyCommon&&!(A&&B))el.style.opacity='.2'}
+if(mode==='prime'){
+if(n===1&&sieveStep>=1)el.classList.add('one');
+else if(n>=2){const isRemoved=removed(n),p=pending?currentBase():null;
+if(p!==null&&n%p===0){el.classList.add('preview')}
+else if(isRemoved){if(lastConfirmed!==null&&n!==lastConfirmed&&n%lastConfirmed===0&&![2,3,5,7,11,13].slice(0,[2,3,5,7,11,13].indexOf(lastConfirmed)).some(k=>n!==k&&n%k===0))el.classList.add('newly-removed');else el.classList.add('composite');}
+else if(prime(n)&&(showPrimeList||sieveStep>=5||bases.slice(0,Math.max(0,sieveStep-1)).includes(n)||extension&&[11,13].slice(0,extensionStep+1).includes(n)))el.classList.add('prime');
 }
 }
-el.disabled=mode==="prime"||(mode==="practice"&&done)||(mode==="relation"&&checked);
-el.onclick=()=>choose(n);
-grid.appendChild(el);
+el.disabled=mode==='prime'||mode==='practice'&&done||mode==='relation'&&checked;
+el.onclick=()=>choose(n);grid.appendChild(el);
 }
-if(mode==="practice"){
-$("summary").textContent="已找到 "+selected.size+" 個；完成前不顯示還有幾個。";
+if(mode==='practice')$('summary').textContent='已找到 '+selected.size+' 個；完成前不顯示還有幾個。';
+if(mode==='relation'){let common=nums(1,100).filter(n=>n%a===0&&n%b===0);$('summary').textContent=checked?'公倍數：'+(common.join('、')||'100以內沒有')+'；最小公倍數：'+(common[0]||'超過100'):'目前正在尋找 '+(stage===0?a:b)+' 的倍數。'}
+if(mode==='prime')$('summary').textContent=showPrimeList?'100以內的質數（共25個）：'+primeList.join('、'):sieveStep>=5?'灰底叉號為合數，剩餘未刪除的2～100數字都是質數，共25個。':'紅圈是已確認保留的質數；亮色是目前要觀察的倍數。';
 }
-if(mode==="relation"){
-let common=nums(1,100).filter(n=>n%a===0&&n%b===0);
-$("summary").textContent=checked?
-"公倍數："+(common.join("、")||"100以內沒有")+"；最小公倍數："+(common[0]||"超過100"):
-"目前正在尋找 "+(stage===0?a:b)+" 的倍數。";
-}
-if(mode==="prime"){
-$("confirmSieve").disabled=pending===null;
-document.querySelectorAll("[data-sieve]").forEach(btn=>{
-let p=+btn.dataset.sieve;
-btn.disabled=pending!==null||sieves.has(p)||showAll;
-});
-$("summary").textContent=showAll||sieves.size===4?
-"100以內共有25個質數。":
-pending!==null?
-"彩色表示這一步準備篩除的數字；灰色是之前已篩除的合數。":
-"灰色表示已篩除的合數；綠色表示保留的質數。";
-}
-}
-function choose(n){
-if(mode==="practice"){
-let t=+$("number").value;
-if(n%t===0){
-selected.add(n);msg("答對！"+n+" 是 "+t+" 的倍數。");
-}else msg(n+" 不是 "+t+" 的倍數，再試一次。");
-}
-if(mode==="relation"){
-let t=+(stage===0?$("first").value:$("second").value);
-if(n%t===0){
-groups[stage].add(n);msg("答對！"+n+" 是 "+t+" 的倍數。");
-}else msg(n+" 不是 "+t+" 的倍數，再找找看。");
-}
-draw();
-}
-document.querySelectorAll("[data-mode]").forEach(btn=>btn.onclick=()=>{
-mode=btn.dataset.mode;
-document.querySelectorAll("[data-mode]").forEach(b=>b.classList.toggle("active",b===btn));
-["practice","relation","prime"].forEach(m=>$(m).classList.toggle("hidden",m!==mode));
-if(mode==="practice")startPractice();
-if(mode==="relation")startRelation();
-if(mode==="prime")startPrime();
-});
-$("level").onchange=()=>{
-fill("number",choices());startPractice();
-};
-$("number").onchange=startPractice;
-$("random").onclick=()=>{
-let list=choices();
-$("number").value=list[Math.floor(Math.random()*list.length)];
-startPractice();
-};
-$("restart").onclick=startPractice;
-$("finish").onclick=()=>{
-done=true;
-let t=+$("number").value;
-let all=nums(1,100).filter(n=>n%t===0);
-let missed=all.filter(n=>!selected.has(n));
-msg(missed.length?
-"找到 "+selected.size+" 個，還漏了 "+missed.length+" 個，橘色是遺漏的倍數。":
-"全部找到了！共 "+all.length+" 個。");
-draw();
-};
-$("hint").onclick=()=>{
-let t=+$("number").value,last=Math.max(0,...selected);
-$("hintText").textContent=
-"跳數：每次增加 "+t+"。乘法延伸："+t+"×9＝"+t*9+"，"+t+"×10＝"+t*10+"。"+
-(last?"你已找到 "+last+"，試試看再加 "+t+"。":"");
-};
-fill("first",nums(2,20));
-fill("second",nums(2,20));
-$("first").value="2";$("second").value="3";
-$("first").onchange=startRelation;
-$("second").onchange=startRelation;
-$("next").onclick=()=>{
-let a=+$("first").value;
-let missing=nums(1,100).filter(n=>n%a===0&&!groups[0].has(n));
-if(missing.length){
-msg("第一組還有 "+missing.length+" 個沒有找到，請繼續尋找。");return;
-}
-stage=1;$("next").disabled=true;
-msg("第一組完成！現在找 "+$("second").value+" 的倍數。");
-draw();
-};
-$("checkRelation").onclick=()=>{
-if(stage===0){msg("請先完成第一組。");return;}
-checked=true;
-msg("比較完成！紫色代表兩組共同的倍數。");
-draw();
-};
-$("common").onclick=()=>{
-onlyCommon=!onlyCommon;
-$("common").textContent=onlyCommon?"顯示所有倍數":"只看公倍數";
-draw();
-};
-$("resetRelation").onclick=startRelation;
-
-document.querySelectorAll("[data-sieve]").forEach(btn=>btn.onclick=()=>{
-let p=+btn.dataset.sieve,order=[2,3,5,7];
-let earlier=order.slice(0,order.indexOf(p)).filter(n=>!sieves.has(n));
-if(earlier.length){
-msg("請先完成 "+earlier.join("、")+" 的篩選。");return;
-}
-if(showAll){msg("請按重新開始，再進行篩選。");return;}
-if(sieves.has(p)){msg(p+" 已經篩選過了。");return;}
-if(pending!==null){msg("請先確認目前的篩選。");return;}
-pending=p;
-let count=nums(2,100).filter(n=>n!==p&&n%p===0&&![...sieves].some(k=>n!==k&&n%k===0)).length;
-msg("已用彩色標示 "+p+" 的其他倍數，共 "+count+" 個新篩除對象。請觀察分布，再按「確定篩除」。");
-draw();
-});
-$("confirmSieve").onclick=()=>{
-if(pending===null)return;
-let p=pending;
-sieves.add(p);pending=null;
-msg("已確認篩除 "+p+" 的其他倍數。"+(sieves.size===4?" 篩選完成！綠色是100以內的25個質數。":" 請繼續下一步。"));
-draw();
-};
-$("showPrimes").onclick=()=>{
-sieves=new Set([2,3,5,7]);
-pending=null;showAll=true;
-msg("已顯示100以內的25個質數。");
-draw();
-};
-$("resetPrime").onclick=startPrime;
-
-fill("number",choices());
-startPractice();
-</script>
-</body>
-</html>
+function choose(n){if(mode==='practice'){let t=+$('number').value;if(n%t===0){selected.add(n);msg('答對！'+n+' 是 '+t+' 的倍數。')}else msg(n+' 不是 '+t+' 的倍數，再試一次。')}if(mode==='relation'){let t=+(stage===0?$('first').value:$('second').value);if(n%t===0){groups[stage].add(n);msg('答對！'+n+' 是 '+t+' 的倍數。')}else msg(n+' 不是 '+t+' 的倍數，再找找看。')}draw()}
+document.querySelectorAll('[data-mode]').forEach(btn=>btn.onclick=()=>{mode=btn.dataset.mode;document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('active',b===btn));['practice','relation','prime'].forEach(m=>$(m).classList.toggle('hidden',m!==mode));if(mode==='practice')startPractice();if(mode==='relation')startRelation();if(mode==='prime')startPrime()});
+$('level').onchange=()=>{fill('number',choices());startPractice()};$('number').onchange=startPractice;
+$('random').onclick=()=>{let list=choices();$('number').value=list[Math.floor(Math.random()*list.length)];startPractice()};$('restart').onclick=startPractice;
+$('finish').onclick=()=>{done=true;let t=+$('number').value,all=nums(1,100).filter(n=>n%t===0),missed=all.filter(n=>!selected.has(n));msg(missed.length?'找到 '+selected.size+' 個，還漏了 '+missed.length+' 個，橘色是遺漏的倍數。':'全部找到了！共 '+all.length+' 個。');draw()};
+$('hint').onclick=()=>{let t=+$('number').value,last=Math.max(0,...selected);$('hintText').textContent='跳數：每次增加 '+t+'。乘法延伸：'+t+'×9＝'+t*9+'，'+t+'×10＝'+t*10+'。'+(last?'你已找到 '+last+'，試試看再加 '+t+'。':'')};
+fill('first',nums(2,20));fill('second',nums(2,20));$('first').value='2';$('second').value='3';$('first').onchange=startRelation;$('second').onchange=startRelation;
+$('next').onclick=()=>{let a=+$('first').value,missing=nums(1,100).filter(n=>n%a===0&&!groups[0].has(n));if(missing.length){msg('第一組還有 '+missing.length+' 個沒有找到，請繼續尋找。');return}stage=1;$('next').disabled=true;msg('第一組完成！現在找 '+$('second').value+' 的倍數。');draw()};
+$('checkRelation').onclick=()=>{if(stage===0){msg('請先完成第一組。');return}checked=true;msg('比較完成！紫色代表兩組共同的倍數。');draw()};$('common').onclick=()=>{onlyCommon=!onlyCommon;$('common').textContent=onlyCommon?'顯示所有倍數':'只看公倍數';draw()};$('resetRelation').onclick=startRelation;
+$('primeNext').onclick=()=>{if(sieveStep===0){sieveStep=1;msg('1不是質數，也不是合數，已用叉號排除。下一步：保留2。');draw();return}if(pending)return;let p=currentBase();if(p==null)return;lastConfirmed=null;pending=true;let newCount=nums(2,100).filter(n=>n!==p&&n%p===0&&!removed(n)).length;msg('正在觀察'+p+'及其全部倍數：亮綠色只標示位置，暫時不新增叉號。按「確定篩除」後，才會用藍色叉號標記本次新刪除的'+newCount+'個合數。');draw()};
+$('primeConfirm').onclick=()=>{if(!pending)return;let p=currentBase();pending=false;lastConfirmed=p;if(extension){extensionStep++;if(extensionStep>=2){extension=false;msg('延伸探索完成！11與13都沒有新的合數可刪除。因為100以內的合數，必有不超過10的質因數。')}else msg('11的其他倍數已全部被前面步驟篩除。接著檢查13。')}else{sieveStep++;msg(sieveStep>=5?'正式篩選完成！2、3、5、7已篩除100以內所有合數。':'已保留'+p+'，並篩除其其他倍數。接著觀察下一個質數。')}draw()};
+$('primeExtension').onclick=()=>{extension=true;extensionStep=0;pending=false;msg('延伸探索：先檢查11的其他倍數，觀察是否還有新的合數。');draw()};
+$('primeList').onclick=()=>{showPrimeList=true;msg('已列出100以內全部25個質數。');draw()};$('primeRestart').onclick=startPrime;
+fill('number',choices());startPractice();
+</script></body></html>
